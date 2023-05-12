@@ -12,7 +12,7 @@ Parameters:
 
   ProductNameParameter:
     Type: String
-    Default: MLOps Deployment Patterns SageMaker Project Example
+    Default: Bayer-DSE-MLOps Deployment Patterns SageMaker Project Example
     Description: The name of this product within the portfolio.
 
   ProductDescriptionParameter:
@@ -22,7 +22,7 @@ Parameters:
 
   ProductOwnerParameter:
     Type: String
-    Default: Product Owner
+    Default: Cory Cotner
     Description: The owner of this product within the portfolio.
 
   ProductDistributorParameter:

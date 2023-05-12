@@ -7,17 +7,17 @@ Description: >-
 Parameters:
   PortfolioNameParameter:
     Type: String
-    Default: SageMaker MLOps Templates
+    Default: Bayer-DSE-SageMaker MLOps Templates
     Description: Name of this AWS Service Catalog Portfolio.
 
   PortfolioDescriptionParameter:
     Type: String
-    Default: Custom project templates for MLOps
+    Default: Bayer-DSE-Custom-Project templates for MLOps
     Description: Description of this portfolio.
 
   PortfolioOwnerParameter:
     Type: String
-    Default: Portfolio Owner
+    Default: Pedro Veronazi
     Description: "Owner of this portfolio. Example: Central IT (it@example.com)"
 
   MakePorfolioAccessibleFromSageMakerStudioParameter:
