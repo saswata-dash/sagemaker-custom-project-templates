@@ -355,35 +355,35 @@ Resources:
                 ProjectName: !Ref ModelDeployTestProject
                 PrimarySource: SourceArtifact
               RunOrder: 2
-            - Name: ApproveDeployment
-              ActionTypeId:
-                Category: Approval
-                Owner: AWS
-                Version: 1
-                Provider: Manual
-              Configuration:
-                CustomData: "Approve this model for Production"
-              RunOrder: 3
-        - Name: DeployProd
-          Actions:
-            - Name: DeployResourcesProd
-              InputArtifacts:
-                - Name: BuildArtifact
-              ActionTypeId:
-                Category: Deploy
-                Owner: AWS
-                Version: 1
-                Provider: CloudFormation
-              Configuration:
-                ActionMode: CREATE_UPDATE
-                RoleArn:
-                  !Join [ ':', [ 'arn', !Ref 'AWS::Partition', 'iam:', !Ref 'AWS::AccountId', 'role/service-role/AmazonSageMakerServiceCatalogProductsUseRole'] ]
-                Capabilities: CAPABILITY_NAMED_IAM
-                #CAPABILITY_IAM,CAPABILITY_AUTO_EXPAND
-                StackName: !Sub sagemaker-${SageMakerProjectName}-${SageMakerProjectId}-deploy-prod #10+33+15+11=69 out of 128 max
-                TemplateConfiguration: BuildArtifact::prod-config-export.json
-                TemplatePath: BuildArtifact::template-export.yml
-              RunOrder: 1
+            # - Name: ApproveDeployment
+            #   ActionTypeId:
+            #     Category: Approval
+            #     Owner: AWS
+            #     Version: 1
+            #     Provider: Manual
+            #   Configuration:
+            #     CustomData: "Approve this model for Production"
+            #   RunOrder: 3
+        # - Name: DeployProd
+        #   Actions:
+        #     - Name: DeployResourcesProd
+        #       InputArtifacts:
+        #         - Name: BuildArtifact
+        #       ActionTypeId:
+        #         Category: Deploy
+        #         Owner: AWS
+        #         Version: 1
+        #         Provider: CloudFormation
+        #       Configuration:
+        #         ActionMode: CREATE_UPDATE
+        #         RoleArn:
+        #           !Join [ ':', [ 'arn', !Ref 'AWS::Partition', 'iam:', !Ref 'AWS::AccountId', 'role/service-role/AmazonSageMakerServiceCatalogProductsUseRole'] ]
+        #         Capabilities: CAPABILITY_NAMED_IAM
+        #         #CAPABILITY_IAM,CAPABILITY_AUTO_EXPAND
+        #         StackName: !Sub sagemaker-${SageMakerProjectName}-${SageMakerProjectId}-deploy-prod #10+33+15+11=69 out of 128 max
+        #         TemplateConfiguration: BuildArtifact::prod-config-export.json
+        #         TemplatePath: BuildArtifact::template-export.yml
+        #       RunOrder: 1
 
 
 
