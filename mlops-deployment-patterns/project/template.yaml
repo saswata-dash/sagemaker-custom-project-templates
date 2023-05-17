@@ -6,7 +6,6 @@ Parameters:
   SageMakerProjectName:
     Type: String
     Description: Name of the project
-    Default: Bayer-HDBD
     MinLength: 1
     MaxLength: 32
     AllowedPattern: ^[a-zA-Z](-*[a-zA-Z0-9])*
@@ -21,13 +20,13 @@ Resources:
     Type: AWS::S3::Bucket
     DeletionPolicy: Retain
     Properties:
-      BucketName: !Sub bayer-hdbd-sagemaker-project-${SageMakerProjectId} # 58 chars max/ 64 allowed
+      BucketName: !Sub sagemaker-project-${SageMakerProjectId} # 58 chars max/ 64 allowed
 
   ModelBuildCodeCommitEventRule:
     Type: AWS::Events::Rule
     Properties:
       # Max length allowed: 64
-      Name: !Sub ${SageMakerProjectName}-${SageMakerProjectId}-build # max: 10+33+15+5=63 chars
+      Name: !Sub sagemaker-${SageMakerProjectName}-build # max: 10+33+15+5=63 chars -${SageMakerProjectId}-build
       Description: "Rule to trigger a deployment when ModelBuild CodeCommit repository is updated"
       EventPattern:
         source:
@@ -54,7 +53,7 @@ Resources:
     Type: AWS::CodeCommit::Repository
     Properties:
       # Max allowed length: 100 chars
-      RepositoryName: !Sub ${SageMakerProjectName}-${SageMakerProjectId}-modelbuild # max: 10+33+15+10=68
+      RepositoryName: !Sub sagemaker-${SageMakerProjectName}-${SageMakerProjectId}-modelbuild # max: 10+33+15+10=68
       RepositoryDescription: !Sub SageMaker Model building workflow infrastructure as code for the Project ${SageMakerProjectName}
       Code:
         S3:
@@ -66,7 +65,7 @@ Resources:
     Type: AWS::CodeBuild::Project
     Properties:
       # Max length: 255 chars
-      Name: !Sub ${SageMakerProjectName}-sagemaker-${SageMakerProjectId}-modelbuild # max: 10+33+15+10=68
+      Name: !Sub sagemaker-${SageMakerProjectName}-${SageMakerProjectId}-modelbuild # max: 10+33+15+10=68
       Description: Builds the model building workflow code repository, creates the SageMaker Pipeline and executes it
       ServiceRole: !Join [ ':', [ 'arn', !Ref 'AWS::Partition', 'iam:', !Ref 'AWS::AccountId', 'role/service-role/AmazonSageMakerServiceCatalogProductsUseRole'] ]
       Artifacts:
@@ -83,7 +82,7 @@ Resources:
          - Name: ARTIFACT_BUCKET
            Value: !Ref MlOpsArtifactsBucket
          - Name: SAGEMAKER_PIPELINE_NAME
-           Value: !Sub ${SageMakerProjectName}-sagemaker-pipeline
+           Value: !Sub sagemaker-${SageMakerProjectName}
          - Name: SAGEMAKER_PIPELINE_ROLE_ARN
            Value: !Join [ ':', [ 'arn', !Ref 'AWS::Partition', 'iam:', !Ref 'AWS::AccountId', 'role/service-role/AmazonSageMakerServiceCatalogProductsUseRole'] ]
          - Name: AWS_REGION
@@ -98,7 +97,7 @@ Resources:
     DependsOn: MlOpsArtifactsBucket
     Properties:
       # Max length: 100 chars
-      Name: !Sub ${SageMakerProjectName}-sagemaker-${SageMakerProjectId}-modelbuild # max: 10+33+15+10=68
+      Name: !Sub sagemaker-${SageMakerProjectName}-${SageMakerProjectId}-modelbuild # max: 10+33+15+10=68
       RoleArn:  !Join [ ':', [ 'arn', !Ref 'AWS::Partition', 'iam:', !Ref 'AWS::AccountId', 'role/service-role/AmazonSageMakerServiceCatalogProductsUseRole'] ]
       ArtifactStore:
         Type: S3
@@ -145,7 +144,7 @@ Resources:
     Type: AWS::Events::Rule
     Properties:
       # Max length allowed: 64
-      Name: !Sub ${SageMakerProjectName}-sagemaker-${SageMakerProjectId}-model # max: 10+33+15+5=63 chars
+      Name: !Sub ${SageMakerProjectName} # max: 10+33+15+5=63 chars sagemaker-${SageMakerProjectName}-${SageMakerProjectId}-model
       Description: "Rule to trigger a deployment when SageMaker Model registry is updated with a new model package. For example, a new model package is registered with Registry"
       EventPattern:
         source:
@@ -154,7 +153,7 @@ Resources:
           - "SageMaker Model Package State Change"
         detail:
           ModelPackageGroupName:
-            - !Sub ${SageMakerProjectName}-${SageMakerProjectId}
+            - !Sub ${SageMakerProjectName} #-${SageMakerProjectId}            
           ModelApprovalStatus:
             - anything-but:
               - PendingManualApproval
@@ -171,7 +170,7 @@ Resources:
     Type: AWS::Events::Rule
     Properties:
       # Max length allowed: 64
-      Name: !Sub ${SageMakerProjectName}-sagemaker-${SageMakerProjectId}-code # max: 10+33+15+4=62 chars
+      Name: !Sub sagemaker-${SageMakerProjectName}-${SageMakerProjectId}-code # max: 10+33+15+4=62 chars
       Description: "Rule to trigger a deployment when CodeCommit is updated with a commit"
       EventPattern:
         source:
@@ -198,7 +197,7 @@ Resources:
     Type: AWS::CodeCommit::Repository
     Properties:
       # Max allowed length: 100 chars
-      RepositoryName: !Sub ${SageMakerProjectName}-sagemaker-${SageMakerProjectId}-modeldeploy # max: 10+33+15+11=69
+      RepositoryName: !Sub sagemaker-${SageMakerProjectName}-${SageMakerProjectId}-modeldeploy # max: 10+33+15+11=69
       RepositoryDescription: !Sub SageMaker Endpoint deployment infrastructure as code for the Project ${SageMakerProjectName}
       Code:
         S3:
@@ -210,7 +209,7 @@ Resources:
     Type: AWS::CodeBuild::Project
     Properties:
       # Max length: 255 chars
-      Name: !Sub ${SageMakerProjectName}sagemaker-${SageMakerProjectId}-modeldeploy # max: 10+33+15+11=69
+      Name: !Sub sagemaker-${SageMakerProjectName}-${SageMakerProjectId}-modeldeploy # max: 10+33+15+11=69
       Description: Builds the Cfn template which defines the Endpoint with specified configuration
       ServiceRole:
         !Join [ ':', [ 'arn', !Ref 'AWS::Partition', 'iam:', !Ref 'AWS::AccountId', 'role/service-role/AmazonSageMakerServiceCatalogProductsUseRole'] ]
@@ -250,7 +249,7 @@ Resources:
     Type: AWS::CodeBuild::Project
     Properties:
       # Max length: 255 chars
-      Name: !Sub ${SageMakerProjectName}-sagemaker-${SageMakerProjectId}-testing # max: 10+33+15+7=65
+      Name: !Sub sagemaker-${SageMakerProjectName}-${SageMakerProjectId}-testing # max: 10+33+15+7=65
       Description: Test the deployment endpoint
       ServiceRole:
         !Join [ ':', [ 'arn', !Ref 'AWS::Partition', 'iam:', !Ref 'AWS::AccountId', 'role/service-role/AmazonSageMakerServiceCatalogProductsUseRole'] ]
@@ -281,7 +280,7 @@ Resources:
     DependsOn: MlOpsArtifactsBucket
     Properties:
       # Max length: 100 chars
-      Name: !Sub ${SageMakerProjectName}-sagemaker-${SageMakerProjectId}-modeldeploy # max: 10+33+15+11=69
+      Name: !Sub sagemaker-${SageMakerProjectName}-${SageMakerProjectId}-modeldeploy # max: 10+33+15+11=69
       RoleArn:
         !Join [ ':', [ 'arn', !Ref 'AWS::Partition', 'iam:', !Ref 'AWS::AccountId', 'role/service-role/AmazonSageMakerServiceCatalogProductsUseRole'] ]
       ArtifactStore:
@@ -336,7 +335,7 @@ Resources:
                 Capabilities: CAPABILITY_NAMED_IAM
                 RoleArn:
                   !Join [ ':', [ 'arn', !Ref 'AWS::Partition', 'iam:', !Ref 'AWS::AccountId', 'role/service-role/AmazonSageMakerServiceCatalogProductsUseRole'] ]
-                StackName: !Sub ${SageMakerProjectName}-sagemaker-${SageMakerProjectId}-deploy-staging  #10+33+15+14=72 out of 128 max
+                StackName: !Sub sagemaker-${SageMakerProjectName}-${SageMakerProjectId}-deploy-staging  #10+33+15+14=72 out of 128 max
                 TemplateConfiguration: BuildArtifact::staging-config-export.json
                 # The buildspec.yml in the application stack uses this file name,
                 TemplatePath: BuildArtifact::template-export.yml
@@ -381,7 +380,7 @@ Resources:
                   !Join [ ':', [ 'arn', !Ref 'AWS::Partition', 'iam:', !Ref 'AWS::AccountId', 'role/service-role/AmazonSageMakerServiceCatalogProductsUseRole'] ]
                 Capabilities: CAPABILITY_NAMED_IAM
                 #CAPABILITY_IAM,CAPABILITY_AUTO_EXPAND
-                StackName: !Sub ${SageMakerProjectName}-sagemaker-${SageMakerProjectId}-deploy-prod #10+33+15+11=69 out of 128 max
+                StackName: !Sub sagemaker-${SageMakerProjectName}-${SageMakerProjectId}-deploy-prod #10+33+15+11=69 out of 128 max
                 TemplateConfiguration: BuildArtifact::prod-config-export.json
                 TemplatePath: BuildArtifact::template-export.yml
               RunOrder: 1
