@@ -15,7 +15,6 @@ Parameters:
   ModelPackageName:
     Type: String
     Description: The trained Model Package Name
-    Default: hdbd-toccata-detection-package
   StageName:
     Type: String
     Description:
