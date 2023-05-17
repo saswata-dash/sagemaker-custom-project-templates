@@ -14,6 +14,10 @@ Parameters:
     Type: String
     Description: Service generated Id of the project.
 
+  ModelPackageGroupName:
+    Type: String
+    Default: hdbd-toccata-detection-package
+
 Resources:
   ##### Section 1: Model build and train resources
   MlOpsArtifactsBucket:
@@ -153,7 +157,7 @@ Resources:
           - "SageMaker Model Package State Change"
         detail:
           ModelPackageGroupName:
-            - !Sub ${SageMakerProjectName} #-${SageMakerProjectId}            
+            - !Ref ModelPackageGroupName #-${SageMakerProjectId}            
           ModelApprovalStatus:
             - anything-but:
               - PendingManualApproval

@@ -15,7 +15,7 @@ Parameters:
   SourceModelPackageGroupName:
       Type: String
       Description: Name of the ModelPackageGroup for which deployments should be triggered for
-  
+
   UseRoleArn: 
     Type: String
     Default: AWSDEFAULT___PROJECT_USE_ROLE_ARN___
@@ -118,7 +118,7 @@ Resources:
          - Name: SAGEMAKER_PROJECT_ARN
            Value: !Join [ ':', [ 'arn', !Ref 'AWS::Partition', 'sagemaker', !Ref 'AWS::Region', !Ref 'AWS::AccountId', !Sub 'project/${SageMakerProjectName}']]
          - Name: SOURCE_MODEL_PACKAGE_GROUP_NAME
-           Value: !Ref SourceModelPackageGroupName
+           Value: !Ref 
          - Name: AWS_REGION
            Value: !Ref AWS::Region
          # these values are used by the build system to output to the output artifacts.
